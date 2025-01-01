@@ -1,10 +1,18 @@
+set(CMAKE_TOOLCHAIN_FILE "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/vcpkg/scripts/buildsystems/vcpkg.cmake")
+
 cmake_minimum_required(VERSION 3.20)
 project(NOVA VERSION 0.0)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(${PROJECT_NAME} src/main.cpp)
+# Add JSON
+include(FetchContent)
+
+FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz)
+FetchContent_MakeAvailable(json)
+
+add_executable(${PROJECT_NAME} src/main.cpp "src/smedia_embed.cpp"  "src/clash.cpp" "src/clash.h" "src/leetcode.cpp" "src/leetcode.h")
 
 if(APPLE)
     # Find DPP for Mac (Apple Silicon)
@@ -13,5 +21,9 @@ if(APPLE)
 elseif(WIN32)
     # Find DPP for Windows, assumes VCPKG
     find_package(DPP CONFIG REQUIRED)
+    find_package(cpr CONFIG REQUIRED)
     target_link_libraries(${PROJECT_NAME} PRIVATE dpp::dpp)
 endif()
+
+target_link_libraries(${PROJECT_NAME} PRIVATE cpr::cpr) # Link CPR
+target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json) # Link JSON
