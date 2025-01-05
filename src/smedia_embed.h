@@ -12,7 +12,6 @@ const std::string TWITTER_MATCH = R"(https:\/\/(www.)?(twitter|x)\.com\/[a-zA-Z0
 class SocialMediaEmbedHandler {
 public:
     SocialMediaEmbedHandler(dpp::cluster& bot);
-
     void handleEmbed(const dpp::message_create_t& event);
 
 private:
@@ -21,9 +20,12 @@ private:
     std::regex instagram_regex;
     std::regex ytshorts_regex;
     std::regex twitter_regex;
+    const std::regex time_regex{ R"((\d+)\s*(min|mins|minutes))", std::regex::icase };
 
     void fixTikTokEmbed(const std::string& link, const dpp::message_create_t& event);
     void fixInstagramEmbed(const std::string& link, const dpp::message_create_t& event);
     void fixYTShortsEmbed(const std::string& link, const dpp::message_create_t& event);
     void fixTwitterEmbed(const std::string& link, const dpp::message_create_t& event);
+
+    void handleTimeMessage(const std::string& content, const dpp::message_create_t& event, int minutes);
 };

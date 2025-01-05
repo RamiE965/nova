@@ -22,8 +22,13 @@ void SocialMediaEmbedHandler::handleEmbed(const dpp::message_create_t& event) {
     else if (std::regex_search(event.msg.content, match, ytshorts_regex)) {
         fixYTShortsEmbed(match[0], event);
     }
-    else if (std::regex_search(event.msg.content, match, twitter_regex)) {
-        fixTwitterEmbed(match[0], event);
+    else if (std::regex_search(event.msg.content, match, time_regex)) {
+        std::cout << "Detected mins" << "\n";
+        int minutes = std::stoi(match[1]);
+        handleTimeMessage(event.msg.content, event, minutes);
+    }
+    else if (event.msg.content.find("min" || "mins" || "minutes")) {
+
     }
 }
 
@@ -55,4 +60,24 @@ void SocialMediaEmbedHandler::fixTwitterEmbed(const std::string& link, const dpp
     }
 
     bot.message_create(dpp::message(event.msg.channel_id, fixed_link).set_reference(event.msg.id));
+}
+
+void SocialMediaEmbedHandler::handleTimeMessage(const std::string& content, const dpp::message_create_t& event, int minutes)
+{
+    // get user's mention string
+    std::string user_mention = event.msg.author.get_mention();
+
+    // create detached thread
+    std::thread([this, minutes, user_mention, channel_id = event.msg.channel_id]() {
+        // sleep
+        std::this_thread::sleep_for(std::chrono::minutes(minutes));
+
+        std::string reminder = user_mention + " It has been " +
+            std::to_string(minutes) + " minute(s)!";
+
+        // send msg
+        this->bot.message_create(
+            dpp::message(channel_id, reminder)
+        );
+        }).detach();
 }

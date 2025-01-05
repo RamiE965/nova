@@ -11,8 +11,11 @@ int main() {
 
 	SocialMediaEmbedHandler handler(bot);
 
+	// listen to message post
 	bot.on_message_create([&handler](const dpp::message_create_t& event) {
+		// ignore bots
 		if (event.msg.author.is_bot()) return;
+			// check for social media embed
 			handler.handleEmbed(event);
 		});
 
@@ -73,7 +76,13 @@ int main() {
 		}
 
 		if (event.command.get_command_name() == "leetcode") {
-			Problem leetcodeProblem = getRandomProblem();
+			Problem leetcodeProblem;
+			std::string diff = std::get<std::string>(event.get_parameter("Difficulty"));
+			if (diff.length() > 0)
+			{
+				leetcodeProblem = getRandomProblemByDifficulty(diff);
+			}
+			else { leetcodeProblem = getRandomProblem(); }
 			dpp::embed leetcodeEmbed = dpp::embed()
 				.set_color(leetcodeProblem.difficulty == "Easy" ? dpp::colors::green : 
 					leetcodeProblem.difficulty == "Medium" ? dpp::colors::yellow : dpp::colors::red)
@@ -105,7 +114,12 @@ int main() {
 				dpp::slashcommand("lolclash", "Get LOL Clash Dates!", bot.me.id)
 			);
 			bot.global_command_create(
-				dpp::slashcommand("leetcode", "WIP: Get a random LC Question!", bot.me.id)
+				dpp::slashcommand("leetcode", "Get a random LC Question!", bot.me.id).add_option(
+					dpp::command_option(dpp::co_string, "Difficulty", "Choose Problem Difficulty", "false")
+					.add_choice(dpp::command_option_choice("Easy", std::string("Easy")))
+					.add_choice(dpp::command_option_choice("Medium", std::string("Medium")))
+					.add_choice(dpp::command_option_choice("Hard", std::string("Hard")))
+					)
 			);
 		}
 	});
