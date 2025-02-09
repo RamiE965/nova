@@ -48,7 +48,7 @@ int main() {
 			dpp::embed clashEmbed = dpp::embed()
 				.set_color(dpp::colors::azure)
 				.set_title("Upcoming Clash Tournaments")
-				.set_description("A list of all upcoming Clash tournament dates as per Riot Games API")
+				.set_description("A list of all upcoming Clash tournament dates as per the Riot Games API")
 				.set_url("https://support-leagueoflegends.riotgames.com/hc/en-us/articles/360000951548-Clash-FAQ") // hard-coded
 				.set_thumbnail("https://media.discordapp.net/attachments/1306480813449412711/1320112628449804379/riot-games480.png?ex=67686a31&is=676718b1&hm=1249e9378dc024fb647ceb08e0a65f406e723597d1108ccafa9df8807c520e7d&=&format=webp&quality=lossless");
 				
@@ -77,9 +77,9 @@ int main() {
 
 		if (event.command.get_command_name() == "leetcode") {
 			Problem leetcodeProblem;
-			std::string diff = std::get<std::string>(event.get_parameter("Difficulty"));
-			if (diff.length() > 0)
+			if (event.get_parameter("difficulty").index() != 0)
 			{
+				auto diff = std::get<std::string>(event.get_parameter("difficulty"));
 				leetcodeProblem = getRandomProblemByDifficulty(diff);
 			}
 			else { leetcodeProblem = getRandomProblem(); }
@@ -102,11 +102,18 @@ int main() {
 			dpp::message msg(event.command.channel_id, leetcodeEmbed);
 			event.reply(msg);
 		}
+
+		if (event.command.get_command_name() == "github") {
+			event.reply("Github Repo: https://github.com/RamiE965/nova");
+		}
 	});
 
-	bot.on_ready([&bot](auto event) {
+	bot.on_ready([&bot](const dpp::ready_t& event) {
 		// registers commands when bot is loaded
 		if (dpp::run_once<struct register_bot_commands>()) {
+			bot.global_command_create(
+				dpp::slashcommand("github", "Get Bot GitHub Repo Link!", bot.me.id)
+			);
 			bot.global_command_create(
 				dpp::slashcommand("ping", "Check bot latency!", bot.me.id)
 			);
@@ -115,13 +122,17 @@ int main() {
 			);
 			bot.global_command_create(
 				dpp::slashcommand("leetcode", "Get a random LC Question!", bot.me.id).add_option(
-					dpp::command_option(dpp::co_string, "Difficulty", "Choose Problem Difficulty", "false")
+					dpp::command_option(dpp::co_string, "difficulty", "Choose Problem Difficulty", false)
 					.add_choice(dpp::command_option_choice("Easy", std::string("Easy")))
 					.add_choice(dpp::command_option_choice("Medium", std::string("Medium")))
 					.add_choice(dpp::command_option_choice("Hard", std::string("Hard")))
-					)
+				)
 			);
 		}
+	});
+
+	bot.on_log([](const dpp::log_t& event) {
+    	std::cout << "Log [" << event.severity << "]: " << event.message << std::endl;
 	});
 
 	bot.start(dpp::st_wait);

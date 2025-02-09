@@ -13,7 +13,6 @@ void SocialMediaEmbedHandler::handleEmbed(const dpp::message_create_t& event) {
     std::smatch match;
 
     if (std::regex_search(event.msg.content, match, tiktok_regex)) {
-        std::cout << "TikTok match found: " << match[0] << std::endl;
         fixTikTokEmbed(match[0], event);
     }
     else if (std::regex_search(event.msg.content, match, instagram_regex)) {
@@ -22,8 +21,10 @@ void SocialMediaEmbedHandler::handleEmbed(const dpp::message_create_t& event) {
     else if (std::regex_search(event.msg.content, match, ytshorts_regex)) {
         fixYTShortsEmbed(match[0], event);
     }
+    else if (std::regex_search(event.msg.content, match, twitter_regex)) {
+        fixTwitterEmbed(match[0], event);
+    }
     else if (std::regex_search(event.msg.content, match, time_regex)) {
-        std::cout << "Detected mins" << "\n";
         int minutes = std::stoi(match[1]);
         handleTimeMessage(event.msg.content, event, minutes);
     }

@@ -35,7 +35,6 @@ std::vector<TournamentDto> getLOLClashDates()
 
 	if (response.status_code == 200) {
 		auto json_r = json::parse(response.text);
-		std::cout << json_r << "\n"; // debugging stuff
 		for (const auto& tournament : json_r)
 		{
 			TournamentDto dto;

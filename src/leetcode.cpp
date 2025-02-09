@@ -1,6 +1,6 @@
 #include "leetcode.h"
 #include <random>
-#include <__msvc_chrono.hpp>
+#include <chrono>
 
 const std::vector<Problem> leetcode_problems = {
     // Math & Geometry
@@ -1029,7 +1029,10 @@ Problem getRandomProblemByDifficulty(const std::string& difficulty) {
         return Problem{};
     }
 
-    return filtered_problems[rand() % filtered_problems.size()];
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dist(0, filtered_problems.size() - 1);
+    return filtered_problems[dist(gen)];
 }
 
 Problem getRandomProblemByCategory(const std::string& category) {
@@ -1044,5 +1047,8 @@ Problem getRandomProblemByCategory(const std::string& category) {
         return Problem{}; 
     }
 
-    return filtered_problems[rand() % filtered_problems.size()];
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dist(0, filtered_problems.size() - 1);
+    return filtered_problems[dist(gen)];
 }
