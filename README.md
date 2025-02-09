@@ -62,7 +62,7 @@ You got it. Yay! 🎉
 
 ## Screenshots
 ### 1. Social Media Embed Fix
-> Fixes embed issues by allowing playing X/Twitter video from within Discord
+> Fixes embed issues by allowing playing social media posts (in this case X/Twitter video) from within Discord
  
 ![Social Media Embed Demo](images/social-media-embed-fix.png)
 ### 2. League Of Legends Clash Tournament Schedule
